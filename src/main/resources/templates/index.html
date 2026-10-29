@@ -3,39 +3,46 @@
 <head th:replace="~{fragments/layout :: head('Welcome')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
-<main class="container">
-  <section class="hero">
-    <div>
-      <h1>Order now. Get a token. Pick up when it’s ready.</h1>
-      <p>No more standing in the canteen line. Order from your phone, track your place in the queue and collect your food the moment your token is called.</p>
-      <p><a class="btn big" th:href="@{/register}">Create account</a> <a class="btn big ghost" th:href="@{/login}">Log in</a></p>
-      <p class="muted"><b th:text="${waiting}">0</b> orders in the kitchen queue right now.</p>
+<main class="landing">
+  <section class="landing-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">FRESH FROM THE KITCHEN · READY WHEN YOU ARE</p>
+      <h1>Good food.<br><em>No waiting.</em></h1>
+      <p class="hero-lede">Skip the canteen line and order your favourites from your phone. Get a token, follow the queue and collect when your food is ready.</p>
+      <div class="hero-actions">
+        <a class="btn big" th:href="@{/register}">Start ordering <span aria-hidden="true">→</span></a>
+        <a class="text-link" th:href="@{/display}">Watch the live board <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="queue-note"><span class="pulse"></span><b th:text="${waiting}">0</b> orders are being prepared right now</p>
     </div>
-    <div class="ticket" aria-hidden="true">
-      <div class="label">Your token</div>
-      <div class="num">T-042</div>
-      <div class="perf"></div>
-      <div class="meta">3 orders ahead · about 6 min</div>
+    <div class="hero-visual" aria-label="Fresh food served at Smart Canteen">
+      <div class="hero-photo"></div>
+      <div class="hero-sticker"><span>Made fresh</span><strong>every day</strong></div>
+      <div class="hero-token">
+        <span>Your token</span><strong>T-042</strong><small>Ready in about 6 min</small>
+      </div>
     </div>
   </section>
 
-  <h2>How it works</h2>
-  <div class="steps-how">
-    <div class="card"><h3>Pick your food</h3><p class="muted">Browse today’s menu, filter by category and add items to your cart.</p></div>
-    <div class="card"><h3>Get a token</h3><p class="muted">Place the order and receive a token. Orders are cooked first come, first served.</p></div>
-    <div class="card"><h3>Watch the queue</h3><p class="muted">See your position and estimated wait live, or check the big screen board.</p></div>
-    <div class="card"><h3>Collect and pay</h3><p class="muted">Show your token at the counter when it turns “Ready for pickup”.</p></div>
-  </div>
+  <section class="benefits">
+    <div class="benefit"><span class="benefit-icon">✦</span><div><h3>Made for busy days</h3><p>Order ahead and spend your break enjoying food, not standing in line.</p></div></div>
+    <div class="benefit"><span class="benefit-icon">◒</span><div><h3>Always know your place</h3><p>Follow your token live from checkout to pickup at the counter.</p></div></div>
+    <div class="benefit"><span class="benefit-icon">♡</span><div><h3>Something for everyone</h3><p>Fresh snacks, filling meals and quick favourites on one menu.</p></div></div>
+  </section>
 
-  <h2>On the menu today</h2>
-  <div class="grid">
-    <div class="card food" th:each="f : ${featured}">
-      <div class="emoji" th:text="${f.emoji}">🍛</div>
-      <h3 th:text="${f.name}">Item</h3>
-      <p class="muted" th:text="${f.description}">Description</p>
-      <span class="price" th:text="'₹' + ${#numbers.formatDecimal(f.price,1,2)}">₹0</span>
+  <section class="landing-section">
+    <div class="section-heading">
+      <div><p class="eyebrow">TODAY'S FAVOURITES</p><h2>Made to be enjoyed.</h2></div>
+      <a class="text-link" th:href="@{/login}">See full menu <span aria-hidden="true">→</span></a>
     </div>
-  </div>
+    <div class="menu-preview">
+      <div class="menu-preview-card" th:each="f : ${featured}">
+        <div class="preview-emoji" th:text="${f.emoji}">🍛</div>
+        <div><h3 th:text="${f.name}">Item</h3><p th:text="${f.description}">Description</p></div>
+        <span class="price" th:text="'₹' + ${#numbers.formatDecimal(f.price,1,2)}">₹0</span>
+      </div>
+    </div>
+  </section>
 </main>
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
