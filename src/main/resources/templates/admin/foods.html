@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Food items')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+  <h1>Food items</h1>
+  <div th:replace="~{fragments/layout :: adminnav('foods')}"></div>
+  <p><a class="btn" th:href="@{/admin/foods/new}">Add food item</a></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Stock</th><th>Prep</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:each="f : ${foods}">
+          <td><span th:text="${f.emoji}"></span> <b th:text="${f.name}">Item</b></td>
+          <td th:text="${f.category}">Cat</td>
+          <td th:text="'₹' + ${#numbers.formatDecimal(f.price,1,2)}">₹0</td>
+          <td th:text="${f.stock}">0</td>
+          <td th:text="${f.prepMinutes} + ' min'">5 min</td>
+          <td><span class="badge" th:classappend="${f.available} ? 'on' : 'off'" th:text="${f.available} ? 'On menu' : 'Hidden'">On</span></td>
+          <td class="actions">
+            <a class="btn small ghost" th:href="@{/admin/foods/{id}/edit(id=${f.id})}">Edit</a>
+            <form th:action="@{/admin/foods/{id}/restock(id=${f.id})}" method="post" class="inline">
+              <input type="number" name="qty" min="1" value="10" aria-label="Quantity to add">
+              <button class="btn small ghost" type="submit">Add stock</button>
+            </form>
+            <form th:action="@{/admin/foods/{id}/toggle(id=${f.id})}" method="post">
+              <button class="btn small ghost" type="submit" th:text="${f.available} ? 'Hide' : 'Show'">Hide</button>
+            </form>
+            <form th:action="@{/admin/foods/{id}/delete(id=${f.id})}" method="post" onsubmit="return confirm('Delete this item?')">
+              <button class="btn small danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

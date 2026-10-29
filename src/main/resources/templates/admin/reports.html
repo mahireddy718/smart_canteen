@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Reports')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <h1>Reports</h1>
+  <div th:replace="~{fragments/layout :: adminnav('reports')}"></div>
+  <div class="stats">
+    <div class="stat"><b th:text="${weekOrders}">0</b><span>Orders in the last 7 days</span></div>
+    <div class="stat"><b th:text="'₹' + ${#numbers.formatDecimal(weekRevenue,1,2)}">₹0</b><span>Revenue in the last 7 days</span></div>
+  </div>
+  <div class="split">
+    <div class="card">
+      <h2>Daily revenue</h2>
+      <div class="bars">
+        <div class="bar" th:each="d : ${days}">
+          <span th:text="${d.label}">Mon</span>
+          <div class="track"><div class="fill" th:style="'width:' + ${d.percent} + '%'"></div></div>
+          <span><b th:text="'₹' + ${#numbers.formatDecimal(d.revenue,1,0)}">₹0</b> · <span th:text="${d.orders}">0</span> orders</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Busiest hours (orders)</h2>
+      <div class="bars hours">
+        <div class="bar" th:each="h : ${hours}">
+          <span th:text="${h.label}">12:00</span>
+          <div class="track"><div class="fill" th:style="'width:' + ${h.percent} + '%'"></div></div>
+          <span th:text="${h.orders}">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h2>Top 10 items (all time)</h2>
+    <p class="muted" th:if="${#lists.isEmpty(topSelling)}">No sales yet.</p>
+    <table th:unless="${#lists.isEmpty(topSelling)}">
+      <tr th:each="row, st : ${topSelling}"><td th:text="${st.count}">1</td><td th:text="${row[0]}">Item</td><td class="right"><b th:text="${row[1]}">0</b> sold</td></tr>
+    </table>
+  </div>
+</main>
+</body>
+</html>

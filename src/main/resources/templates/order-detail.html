@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Your token')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+  <div class="two">
+    <div>
+      <div class="ticket">
+        <div class="label">Your token</div>
+        <div class="num" th:text="${order.token.code}">T-001</div>
+        <div class="perf"></div>
+        <div class="meta" th:text="${order.status.label}">Placed</div>
+        <div class="meta" th:text="${#temporals.format(order.createdAt,'dd MMM yyyy, HH:mm')}">date</div>
+      </div>
+      <p class="center no-print"><button class="btn ghost small" type="button" onclick="window.print()">Print token</button></p>
+    </div>
+    <div id="tracker" th:attr="data-url=@{/api/orders/{id}/status(id=${order.id})},data-status=${order.status.name()}">
+      <h1>Order #<span th:text="${order.id}">1</span></h1>
+      <ol class="steps" th:unless="${order.status.name() == 'CANCELLED'}">
+        <li th:classappend="${order.status.ordinal() >= 0} ? 'done'">Placed</li>
+        <li th:classappend="${order.status.ordinal() >= 1} ? 'done'">Preparing</li>
+        <li th:classappend="${order.status.ordinal() >= 2} ? 'done'">Ready</li>
+        <li th:classappend="${order.status.ordinal() >= 3} ? 'done'">Collected</li>
+      </ol>
+      <div class="alert error" th:if="${order.status.name() == 'CANCELLED'}">This order was cancelled and the items were returned to stock.</div>
+      <div class="banner" th:if="${position > 0}">
+        Position in queue: <b id="pos" th:text="${position}">1</b> · Estimated wait: <b id="eta" th:text="${eta}">5</b> min
+      </div>
+      <div class="alert success" th:if="${order.status.name() == 'READY'}">Your food is ready. Show this token at the counter.</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Qty</th><th class="right">Price</th></tr></thead>
+          <tbody>
+            <tr th:each="i : ${order.items}">
+              <td th:text="${i.food.emoji} + ' ' + ${i.food.name}">Item</td>
+              <td th:text="${i.quantity}">1</td>
+              <td class="right" th:text="'₹' + ${#numbers.formatDecimal(i.subtotal,1,2)}">₹0</td>
+            </tr>
+            <tr><td colspan="2"><b>Total</b> (<span th:text="${order.paymentMethod.label}">Cash</span>)</td><td class="right"><b th:text="'₹' + ${#numbers.formatDecimal(order.total,1,2)}">₹0</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" th:if="${order.note}" th:text="'Note: ' + ${order.note}"></p>
+      <form th:if="${order.status.name() == 'PLACED'}" th:action="@{/orders/{id}/cancel(id=${order.id})}" method="post" class="no-print"
+            onsubmit="return confirm('Cancel this order?')">
+        <p><button class="btn danger" type="submit">Cancel order</button></p>
+      </form>
+    </div>
+  </div>
+</main>
+</body>
+</html>

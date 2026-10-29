@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Cart')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+  <h1>Your cart</h1>
+  <div class="empty" th:if="${#lists.isEmpty(lines)}">
+    <p>Your cart is empty.</p>
+    <a class="btn" th:href="@{/menu}">Browse the menu</a>
+  </div>
+  <div th:unless="${#lists.isEmpty(lines)}" class="two">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th class="right">Subtotal</th><th></th></tr></thead>
+        <tbody>
+          <tr th:each="l : ${lines}">
+            <td><span th:text="${l.food.emoji}"></span> <b th:text="${l.food.name}">Item</b></td>
+            <td th:text="'₹' + ${#numbers.formatDecimal(l.food.price,1,2)}">₹0</td>
+            <td>
+              <form th:action="@{/cart/update}" method="post" class="inline">
+                <input type="hidden" name="foodId" th:value="${l.food.id}">
+                <input type="number" name="qty" th:value="${l.qty}" min="0" max="10" aria-label="Quantity">
+                <button class="btn small ghost" type="submit">Update</button>
+              </form>
+            </td>
+            <td class="right price" th:text="'₹' + ${#numbers.formatDecimal(l.subtotal,1,2)}">₹0</td>
+            <td>
+              <form th:action="@{/cart/remove}" method="post" class="inline">
+                <input type="hidden" name="foodId" th:value="${l.food.id}">
+                <button class="btn small danger" type="submit">Remove</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Checkout</h2>
+      <div class="total-row"><span>Total</span><span class="price" th:text="'₹' + ${#numbers.formatDecimal(total,1,2)}">₹0</span></div>
+      <form th:action="@{/checkout}" method="post">
+        <label for="pm">Payment</label>
+        <select id="pm" name="paymentMethod">
+          <option th:each="m : ${methods}" th:value="${m}" th:text="${m.label}">Cash</option>
+        </select>
+        <label for="note">Note for the kitchen (optional)</label>
+        <textarea id="note" name="note" rows="2" maxlength="250" placeholder="Less spicy, no onion…"></textarea>
+        <p><button class="btn ticket big" type="submit" style="width:100%">Place order and get token</button></p>
+      </form>
+    </div>
+  </div>
+</main>
+</body>
+</html>

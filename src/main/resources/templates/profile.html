@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Profile')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div class="form-card">
+    <h1>Your profile</h1>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <form th:action="@{/profile}" method="post">
+      <label>Email</label>
+      <input th:value="${currentUser.email}" disabled>
+      <label for="name">Name</label>
+      <input id="name" name="name" th:value="${currentUser.name}" required>
+      <label for="phone">Phone</label>
+      <input id="phone" name="phone" th:value="${currentUser.phone}">
+      <label for="newPassword">New password (leave blank to keep current)</label>
+      <input id="newPassword" name="newPassword" type="password" minlength="6">
+      <p><button class="btn" type="submit">Save changes</button></p>
+    </form>
+  </div>
+</main>
+</body>
+</html>

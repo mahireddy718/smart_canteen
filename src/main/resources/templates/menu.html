@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Menu')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+  <h1>Today’s menu</h1>
+  <div class="banner"><b th:text="${waiting}">0</b> orders are ahead of you in the kitchen queue right now.</div>
+  <form class="filters" method="get" th:action="@{/menu}">
+    <input type="search" name="q" th:value="${q}" placeholder="Search dishes" aria-label="Search dishes">
+    <button class="btn" type="submit">Search</button>
+    <input type="hidden" name="category" th:value="${category}">
+  </form>
+  <div class="chips">
+    <a th:href="@{/menu}" th:classappend="${category == null or category == ''} ? 'active'">All</a>
+    <a th:each="c : ${categories}" th:href="@{/menu(category=${c})}" th:text="${c}" th:classappend="${c == category} ? 'active'">Category</a>
+  </div>
+  <div class="empty" th:if="${#lists.isEmpty(foods)}">No dishes match your search. Clear the filters to see the full menu.</div>
+  <div class="grid">
+    <div class="card food" th:each="f : ${foods}" th:classappend="${!f.available} ? 'soldout'">
+      <div class="emoji" th:text="${f.emoji}">🍛</div>
+      <h3 th:text="${f.name}">Name</h3>
+      <p class="muted" th:text="${f.description}">Desc</p>
+      <div>
+        <span class="tag" th:text="${f.category}">Cat</span>
+        <span class="tag" th:text="${f.prepMinutes} + ' min'">5 min</span>
+        <span class="tag low" th:if="${f.available and f.stock <= 5}" th:text="'Only ' + ${f.stock} + ' left'">Low</span>
+      </div>
+      <div class="price" th:text="'₹' + ${#numbers.formatDecimal(f.price,1,2)}">₹0</div>
+      <form th:action="@{/cart/add}" method="post" class="inline" th:if="${f.available}">
+        <input type="hidden" name="foodId" th:value="${f.id}">
+        <input type="number" name="qty" value="1" min="1" max="10" aria-label="Quantity">
+        <button class="btn small" type="submit">Add to cart</button>
+      </form>
+      <span class="badge off" th:unless="${f.available}">Sold out</span>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

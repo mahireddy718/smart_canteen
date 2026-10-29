@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Food item')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div class="form-card wide">
+    <h1 th:text="${food.id == null} ? 'Add food item' : 'Edit food item'">Food item</h1>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <form th:action="@{/admin/foods/save}" th:object="${food}" method="post">
+      <input type="hidden" th:field="*{id}">
+      <div class="row2">
+        <div><label for="name">Name</label><input id="name" th:field="*{name}" required></div>
+        <div><label for="emoji">Emoji icon</label><input id="emoji" th:field="*{emoji}" maxlength="8"></div>
+      </div>
+      <label for="description">Description</label>
+      <input id="description" th:field="*{description}" maxlength="250">
+      <div class="row2">
+        <div><label for="price">Price (₹)</label><input id="price" type="number" step="0.01" min="0.01" th:field="*{price}" required></div>
+        <div><label for="category">Category</label>
+          <input id="category" th:field="*{category}" list="cats">
+          <datalist id="cats"><option th:each="c : ${categories}" th:value="${c}"></option></datalist>
+        </div>
+      </div>
+      <div class="row2">
+        <div><label for="stock">Stock today</label><input id="stock" type="number" min="0" th:field="*{stock}" required></div>
+        <div><label for="prepMinutes">Prep time (minutes)</label><input id="prepMinutes" type="number" min="1" th:field="*{prepMinutes}" required></div>
+      </div>
+      <label><input type="checkbox" th:field="*{available}"> Show on the menu</label>
+      <p><button class="btn" type="submit">Save item</button> <a class="btn ghost" th:href="@{/admin/foods}">Cancel</a></p>
+    </form>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Log in')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div class="form-card">
+    <h1>Log in</h1>
+    <div class="alert error" th:if="${param.error}">Wrong email or password, or the account is deactivated.</div>
+    <div class="alert success" th:if="${param.logout}">You have been logged out.</div>
+    <div class="alert success" th:if="${param.registered}">Account created. Log in to start ordering.</div>
+    <form th:action="@{/login}" method="post">
+      <label for="username">Email</label>
+      <input id="username" name="username" type="email" required autofocus>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" required>
+      <p><button class="btn big" type="submit" style="width:100%">Log in</button></p>
+    </form>
+    <p class="muted">New here? <a th:href="@{/register}">Create an account</a>.</p>
+    <details class="muted"><summary>Demo accounts</summary>
+      <p>Admin: admin@canteen.com / admin123<br>Staff: staff@canteen.com / staff123<br>Student: student@canteen.com / student123</p>
+    </details>
+  </div>
+</main>
+</body>
+</html>

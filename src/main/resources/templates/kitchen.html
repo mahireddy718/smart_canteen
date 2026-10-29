@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Kitchen')}"></head>
+<body data-autorefresh>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+  <h1>Kitchen queue</h1>
+  <p class="muted">Orders are listed first come, first served. Work from the top.</p>
+  <div class="split" style="margin-bottom:22px">
+    <div class="card">
+      <h3>Start the next order</h3>
+      <form th:action="@{/kitchen/next}" method="post"><button class="btn ticket" type="submit">Call next in line</button></form>
+    </div>
+    <div class="card">
+      <h3>Hand over at the counter</h3>
+      <form th:action="@{/kitchen/verify}" method="post" class="inline">
+        <input name="code" placeholder="Token e.g. T-012" required aria-label="Token number">
+        <button class="btn" type="submit">Verify token</button>
+      </form>
+    </div>
+  </div>
+
+  <h2>In the queue (<span th:text="${#lists.size(queue)}">0</span>)</h2>
+  <div class="empty" th:if="${#lists.isEmpty(queue)}">The queue is clear. New orders will appear here.</div>
+  <div class="table-wrap" th:unless="${#lists.isEmpty(queue)}">
+    <table>
+      <thead><tr><th>#</th><th>Token</th><th>Items</th><th>Customer</th><th>Waiting</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr th:each="o, st : ${queue}">
+          <td th:text="${st.count}">1</td>
+          <td class="price" th:text="${o.token.code}">T-001</td>
+          <td>
+            <div th:each="i : ${o.items}" th:text="${i.quantity} + ' × ' + ${i.food.name}">1 × Item</div>
+            <div class="muted" th:if="${o.note}" th:text="'Note: ' + ${o.note}"></div>
+          </td>
+          <td th:text="${o.user.name}">Name</td>
+          <td th:text="${#temporals.format(o.createdAt,'HH:mm')}">12:00</td>
+          <td><span th:class="'badge ' + ${#strings.toLowerCase(o.status.name())}" th:text="${o.status.label}">Placed</span></td>
+          <td class="actions">
+            <form th:action="@{/kitchen/{id}/advance(id=${o.id})}" method="post">
+              <button class="btn small" type="submit" th:text="${o.status.name() == 'PLACED'} ? 'Start cooking' : 'Mark ready'">Next</button>
+            </form>
+            <form th:action="@{/kitchen/{id}/cancel(id=${o.id})}" method="post" onsubmit="return confirm('Cancel this order?')">
+              <button class="btn small danger" type="submit">Cancel</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin-top:28px">Ready for pickup (<span th:text="${#lists.size(ready)}">0</span>)</h2>
+  <div class="empty" th:if="${#lists.isEmpty(ready)}">Nothing waiting at the counter.</div>
+  <div class="table-wrap" th:unless="${#lists.isEmpty(ready)}">
+    <table>
+      <thead><tr><th>Token</th><th>Customer</th><th>Total</th><th></th></tr></thead>
+      <tbody>
+        <tr th:each="o : ${ready}">
+          <td class="price" th:text="${o.token.code}">T-001</td>
+          <td th:text="${o.user.name}">Name</td>
+          <td th:text="'₹' + ${#numbers.formatDecimal(o.total,1,2)}">₹0</td>
+          <td><form th:action="@{/kitchen/{id}/advance(id=${o.id})}" method="post"><button class="btn small" type="submit">Mark collected</button></form></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

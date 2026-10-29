@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title} + ' | Smart Canteen'">Smart Canteen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎫%3C/text%3E%3C/svg%3E">
+  <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body>
+<nav class="nav" th:fragment="navbar">
+  <a class="brand" th:href="@{/}">Smart<span>Canteen</span></a>
+  <button class="menu-toggle" type="button" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+  <div class="nav-links">
+    <a th:href="@{/display}">Live board</a>
+    <th:block sec:authorize="isAuthenticated()">
+      <a th:href="@{/menu}">Menu</a>
+      <a th:href="@{/cart}">Cart<span class="pill" th:if="${cartCount > 0}" th:text="${cartCount}">0</span></a>
+      <a th:href="@{/orders}">My orders</a>
+      <a sec:authorize="hasAnyRole('STAFF','ADMIN')" th:href="@{/kitchen}">Kitchen</a>
+      <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Admin</a>
+      <a th:href="@{/profile}" th:text="${currentUser != null} ? ${currentUser.name} : 'Profile'">Profile</a>
+      <form th:action="@{/logout}" method="post"><button class="linkbtn" type="submit">Log out</button></form>
+    </th:block>
+    <th:block sec:authorize="!isAuthenticated()">
+      <a th:href="@{/login}">Log in</a>
+      <a class="btn small" th:href="@{/register}">Create account</a>
+    </th:block>
+    <button class="linkbtn" type="button" onclick="toggleTheme()" aria-label="Switch light or dark theme">◐</button>
+  </div>
+</nav>
+<div th:fragment="flash">
+  <div class="alert success" th:if="${success}" th:text="${success}"></div>
+  <div class="alert error" th:if="${error}" th:text="${error}"></div>
+</div>
+<div th:fragment="adminnav(active)" class="subnav">
+  <a th:href="@{/admin}" th:classappend="${active == 'dash'} ? 'active'">Dashboard</a>
+  <a th:href="@{/admin/foods}" th:classappend="${active == 'foods'} ? 'active'">Food items</a>
+  <a th:href="@{/admin/orders}" th:classappend="${active == 'orders'} ? 'active'">All orders</a>
+  <a th:href="@{/admin/users}" th:classappend="${active == 'users'} ? 'active'">Users</a>
+  <a th:href="@{/admin/reports}" th:classappend="${active == 'reports'} ? 'active'">Reports</a>
+  <a th:href="@{/kitchen}">Kitchen queue</a>
+</div>
+<footer class="footer" th:fragment="footer">Smart Canteen Token System · skip the line, keep your token</footer>
+</body>
+</html>

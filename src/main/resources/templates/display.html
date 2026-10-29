@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Live board')}"></head>
+<body class="board-page">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="board-top">
+  <span style="font-family:var(--font-mono);font-size:1.6rem" id="clock"></span>
+  <button class="btn ticket small" type="button" onclick="document.documentElement.requestFullscreen && document.documentElement.requestFullscreen()">Full screen</button>
+</div>
+<div class="board" id="board">
+  <section class="col"><h2>Being prepared</h2><div class="chip-row" id="col-preparing"></div></section>
+  <section class="col readycol"><h2>Ready: collect at the counter</h2><div class="chip-row" id="col-ready"></div></section>
+  <section class="col"><h2>Waiting in queue</h2><div class="chip-row" id="col-waiting"></div></section>
+</div>
+</body>
+</html>

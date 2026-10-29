@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('All orders')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+  <h1>All orders</h1>
+  <div th:replace="~{fragments/layout :: adminnav('orders')}"></div>
+  <div class="chips">
+    <a th:href="@{/admin/orders}" th:classappend="${status == null} ? 'active'">All</a>
+    <a th:each="s : ${statuses}" th:href="@{/admin/orders(status=${s})}" th:text="${s.label}" th:classappend="${s == status} ? 'active'">Status</a>
+    <a th:href="@{/admin/orders/export}">Download CSV</a>
+  </div>
+  <div class="empty" th:if="${#lists.isEmpty(orders)}">No orders with this status.</div>
+  <div class="table-wrap" th:unless="${#lists.isEmpty(orders)}">
+    <table>
+      <thead><tr><th>Token</th><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr th:each="o : ${orders}">
+          <td class="price" th:text="${o.token.code}">T-001</td>
+          <td th:text="${#temporals.format(o.createdAt,'dd MMM, HH:mm')}">date</td>
+          <td th:text="${o.user.name}">Name</td>
+          <td><div th:each="i : ${o.items}" th:text="${i.quantity} + ' × ' + ${i.food.name}">1 × Item</div></td>
+          <td th:text="'₹' + ${#numbers.formatDecimal(o.total,1,2)}">₹0</td>
+          <td th:text="${o.paymentMethod}">CASH</td>
+          <td><span th:class="'badge ' + ${#strings.toLowerCase(o.status.name())}" th:text="${o.status.label}">Placed</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Users')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+  <h1>Users</h1>
+  <div th:replace="~{fragments/layout :: adminnav('users')}"></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Role</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr th:each="u : ${users}">
+          <td th:text="${u.name}">Name</td>
+          <td th:text="${u.email}">email</td>
+          <td th:text="${#temporals.format(u.createdAt,'dd MMM yyyy')}">date</td>
+          <td>
+            <form th:action="@{/admin/users/{id}/role(id=${u.id})}" method="post" class="inline">
+              <select name="role" aria-label="Role" style="width:auto">
+                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == u.role}">Role</option>
+              </select>
+              <button class="btn small ghost" type="submit">Save</button>
+            </form>
+          </td>
+          <td><span class="badge" th:classappend="${u.active} ? 'on' : 'off'" th:text="${u.active} ? 'Active' : 'Deactivated'">Active</span></td>
+          <td>
+            <form th:action="@{/admin/users/{id}/toggle(id=${u.id})}" method="post">
+              <button class="btn small ghost" type="submit" th:text="${u.active} ? 'Deactivate' : 'Activate'">Toggle</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
