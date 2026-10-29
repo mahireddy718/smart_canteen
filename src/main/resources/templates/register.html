@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{fragments/layout :: head('Create account')}"></head>
-<body>
+<body class="auth-page">
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
-<main class="container">
-  <div class="form-card">
+<main class="auth-shell">
+  <div class="auth-art">
+    <p class="eyebrow">A BETTER BREAK STARTS HERE</p>
+    <h1>Eat well.<br><em>Skip the line.</em></h1>
+    <p>Create your account and keep your token, orders and favourite meals in one place.</p>
+    <span class="auth-art-food">🥞</span>
+  </div>
+  <div class="form-card auth-card">
+    <span class="auth-kicker">JOIN THE TABLE</span>
     <h1>Create account</h1>
     <div class="alert error" th:if="${error}" th:text="${error}"></div>
     <form th:action="@{/register}" method="post">
